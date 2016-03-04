@@ -7,7 +7,16 @@ fluidPage(
   sidebarLayout(
     # Sidebar with a slider and selection inputs
     sidebarPanel(
-     
+      fileInput('file1', 'Choose file to upload',
+                accept = c(
+                  'text/csv',
+                  'text/comma-separated-values',
+                  'text/tab-separated-values',
+                  'text/plain',
+                  '.csv',
+                  '.tsv'
+                )
+      ),
      
       hr(),
       sliderInput("clust",
@@ -35,7 +44,7 @@ fluidPage(
     
     mainPanel(h4("LDA topics"),
       formattableOutput  ("LDA"),hr(),h4("Text"),
-      verbatimTextOutput ("textout")
+      tableOutput('contents')
     )
   )
 )

@@ -28,100 +28,38 @@ rm(list = ls())
 setwd("/home/bigdata/LDA/textmining/")
 #Afile<-'linked.txt'
 #Afile<-'caravanelse.csv'
-Afile <- 'friends_lab.csv'
-# load data into a matrix
-#data <- read.csv2(Afile, sep="\n", stringsAsFactors=FALSE,header = FALSE)
-
-data <- read.csv(Afile, stringsAsFactors=FALSE)
-
-
-desc <- gsub("'", "", data$description_2)  # remove apostrophes
-desc <- gsub("[[:punct:]]", "", desc)  # replace punctuation with space
-desc <- gsub("[[:cntrl:]]", "", desc)  # replace control characters with space
-desc <- gsub("[[:digit:]]+", "", desc) # remove numbers
-
-desc <- gsub("^[[:space:]]+", "", desc) # remove whitespace at beginning of documents
-desc <- gsub("[[:space:]]+$", "", desc) # remove whitespace at end of documents
-desc <- tolower(desc)  #
-
-
 
  
-doc.list <- strsplit(desc, "[[:space:]]+")
-#stem.list <- lapply (doc.list, wordStem )
-
- 
-
-
-# compute the table of terms:
-term.table <- table(unlist(doc.list))
-term.table <- sort(term.table, decreasing = TRUE)
-
-# remove terms that are stop words or occur fewer than 5 times:
-stop_words <- stopwords("SMART")
-del <- names(term.table) %in% stop_words | term.table < 5 
-
-term.table <- term.table[!del]
-
-
-
-
-
-
-
-vocab <-  (names(term.table))
-
-
-
-
-
-
-get.terms <- function(x,vocab) {
-  index <- match(x, vocab)
-  index <- index[!is.na(index)]
-  rbind(as.integer(index - 1), as.integer(rep(1, length(index))))
-}
-
-###### simple laplly  
-
- 
-documents <- lapply(doc.list, get.terms,vocab)
- 
-
-
-
-
-
-# Compute some statistics related to the data set:
-D <- length(documents)  # number of documents  
-W <- length(vocab)  # number of terms in the vocab  
-doc.length <- sapply(documents, function(x) sum(x[2, ])) 
-N <- sum(doc.length)  
-term.frequency <- as.integer(term.table)
-
-####STEMMING GOES HERE
-
-
-##########################
-
-
-
-
-
-
 
 
 shinyServer(function(input, output, session) {
 
-
-  
-output$textout <-  renderText      ({  
-  
-  paste0(data)
+  output$contents <- renderTable({
   
   
+  inFile <- input$file1
+  
+  if (is.null(inFile))
+    return (NULL)
+  
+  #read.csv(inFile$datapath, header = input$header,
+  #         sep = input$sep, quote = input$quote)
+  #readLines(inFile$datapath)
+  read.csv2(inFile$datapath, sep="\n", stringsAsFactors=FALSE,header = FALSE)
   
   })
+  
+  
+ 
+  #Afile <- 'friends_lab.csv'
+  # load data into a matrix
+  #data <- read.csv2(Afile, sep="\n", stringsAsFactors=FALSE,header = FALSE)
+  
+  #data <- read.csv(Afile, stringsAsFactors=FALSE)
+  
+  
+  
+  
 
   
   
@@ -129,6 +67,87 @@ output$textout <-  renderText      ({
 output$LDA <-  renderFormattable      ({
 
 
+  
+  inFile <- input$file1
+  
+  #if (is.null(inFile))
+   # return (NULL)
+  
+  #read.csv(inFile$datapath, header = input$header,
+  #         sep = input$sep, quote = input$quote)
+  
+  data <-read.csv2(inFile$datapath, sep="\n", stringsAsFactors=FALSE,header = FALSE)
+  
+  
+  
+  
+  
+#######
+  
+  desc <- gsub("'", "", data)  # remove apostrophes
+  desc <- gsub("[[:punct:]]", "", desc)  # replace punctuation with space
+  desc <- gsub("[[:cntrl:]]", "", desc)  # replace control characters with space
+  desc <- gsub("[[:digit:]]+", "", desc) # remove numbers
+  
+  desc <- gsub("^[[:space:]]+", "", desc) # remove whitespace at beginning of documents
+  desc <- gsub("[[:space:]]+$", "", desc) # remove whitespace at end of documents
+  desc <- tolower(desc)  #
+  doc.list <- strsplit(desc, "[[:space:]]+")
+  #stem.list <- lapply (doc.list, wordStem )
+  
+  
+  
+  
+  # compute the table of terms:
+  term.table <- table(unlist(doc.list))
+  term.table <- sort(term.table, decreasing = TRUE)
+  
+  # remove terms that are stop words or occur fewer than 5 times:
+  stop_words <- stopwords("SMART")
+  del <- names(term.table) %in% stop_words | term.table < 5 
+  
+  term.table <- term.table[!del]
+  
+  
+  
+  
+  
+  
+  
+  vocab <-  (names(term.table))
+  
+  
+  
+  
+  
+  
+  get.terms <- function(x,vocab) {
+    index <- match(x, vocab)
+    index <- index[!is.na(index)]
+    rbind(as.integer(index - 1), as.integer(rep(1, length(index))))
+  }
+  
+  ###### simple laplly  
+  
+  
+  documents <- lapply(doc.list, get.terms,vocab)
+  
+  
+  
+  
+  
+  
+  # Compute some statistics related to the data set:
+  D <- length(documents)  # number of documents  
+  W <- length(vocab)  # number of terms in the vocab  
+  doc.length <- sapply(documents, function(x) sum(x[2, ])) 
+  N <- sum(doc.length)  
+  term.frequency <- as.integer(term.table)
+########
+  
+  
+  
+  
 
 # MCMC and model tuning parameters:
 K <- input$clust
