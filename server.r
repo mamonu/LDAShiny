@@ -21,19 +21,21 @@ library(shiny)
 #clean up the r environment.
 rm(list = ls())
 #@home working directory
-setwd("/Users/thorosm2002/Dropbox/Rcode/LDAShiny")
+#setwd("/Users/thorosm2002/Dropbox/Rcode/LDAShiny")
 
 
 #@work working directory
-#setwd("/home/bigdata/LDA/textmining/")
-Afile<-'linked.txt'
+setwd("/home/bigdata/LDA/textmining/")
+#Afile<-'linked.txt'
 #Afile<-'caravanelse.csv'
+Afile <- 'friends_lab.csv'
 # load data into a matrix
-data <- read.csv2(Afile, sep="\n", stringsAsFactors=FALSE,header = FALSE)
+#data <- read.csv2(Afile, sep="\n", stringsAsFactors=FALSE,header = FALSE)
 
- 
+data <- read.csv(Afile, stringsAsFactors=FALSE)
 
-desc <- gsub("'", "", data)  # remove apostrophes
+
+desc <- gsub("'", "", data$description_2)  # remove apostrophes
 desc <- gsub("[[:punct:]]", "", desc)  # replace punctuation with space
 desc <- gsub("[[:cntrl:]]", "", desc)  # replace control characters with space
 desc <- gsub("[[:digit:]]+", "", desc) # remove numbers

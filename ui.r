@@ -12,7 +12,7 @@ fluidPage(
       hr(),
       sliderInput("clust",
                   "clusters:",
-                  min = 1,  max = 5, value = 3),
+                  min = 1,  max = 12, value = 3),
       
       sliderInput("ialpha",
                   "alpha:",
